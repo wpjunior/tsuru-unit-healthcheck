@@ -39,7 +39,7 @@ def get_units(app, path):
         return
 
     if resp.code != 200:
-        logging.error('Failed to get unit list: %s', str(resp.code))
+        logging.error('Failed to get unit list: %d', resp.code)
         return
 
     ok = True
