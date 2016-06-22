@@ -5,7 +5,11 @@ import argparse
 import os
 import json
 import sys
-from urllib2 import Request, urlopen
+
+try:
+    from urllib2 import Request, urlopen
+except ImportError:
+    from urllib.request import Request, urlopen
 
 
 TSURU_TARGET = os.environ['TSURU_TARGET']
@@ -43,7 +47,7 @@ def get_units(app, path):
         return
 
     ok = True
-    data = json.loads(resp.read())
+    data = json.loads(resp.read().decode('utf-8'))
 
     for unit in data['units']:
         if unit['ProcessName'] != 'web':
