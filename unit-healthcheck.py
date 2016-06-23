@@ -51,6 +51,11 @@ def get_units(app, path):
 
     for unit in data['units']:
         if unit['ProcessName'] != 'web':
+            logging.warn('[%s] skip task: %s', unit['Ip'], unit['ProcessName'])
+            continue
+
+        if unit['Status'] != 'started':
+            logging.warn('[%s] skip status: %s', unit['Ip'], unit['Status'])
             continue
 
         if not healthcheck_unit(unit, path):
