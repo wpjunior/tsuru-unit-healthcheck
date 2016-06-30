@@ -7,9 +7,9 @@ import json
 import sys
 
 try:
-    from urllib2 import Request, urlopen
+    from urllib2 import Request, urlopen, HTTPError
 except ImportError:
-    from urllib.request import Request, urlopen
+    from urllib.request import Request, urlopen, HTTPError
 
 
 TSURU_TARGET = os.environ['TSURU_TARGET']
@@ -70,7 +70,17 @@ def healthcheck_unit(unit, path):
     url = "%s://%s%s" % (addr['Scheme'], addr['Host'], path)
 
     try:
-        resp = urlopen(url, timeout=3)
+        resp = urlopen(url, timeout=5)
+    except HTTPError as err:
+        logging.error('[%s] Failed to healthcheck unit: %s', url, err)
+
+        if hasattr(err, 'file'):
+            logging.error(err.file.read().decode('utf-8'))
+        else:
+            logging.error(err.read())
+
+        return False
+
     except Exception as err:
         logging.error('[%s] Failed to healthcheck unit: %s', url, err)
         return False
