@@ -22,17 +22,21 @@ def main():
         description='Get healthcheck for all units'
     )
     parser.add_argument('-a', metavar='app', type=str,
-                        help='Name of app')
+                        help='App name',
+                        required=True)
 
     parser.add_argument('-p', metavar='path', type=str,
                         default='/healthcheck',
-                        help='Path of healthcheck')
+                        help='Healthcheck path')
+
+    parser.add_argument('-H', metavar='header', type=str,
+                        help='Add headers to healthcheck call - "Header1:Value1, Header2:Value2"')
 
     args = parser.parse_args()
-    get_units(args.a, args.p)
+    get_units(args.a, args.p, args.H)
 
 
-def get_units(app, path):
+def get_units(app, path, header):
     url = '%s/apps/%s' % (TSURU_TARGET, app)
     req = Request(url, None, {'Authorization': TSURU_TOKEN})
 
@@ -58,19 +62,27 @@ def get_units(app, path):
             logging.warn('[%s] skip status: %s', unit['Ip'], unit['Status'])
             continue
 
-        if not healthcheck_unit(unit, path):
+        if not healthcheck_unit(unit, path, header):
             ok = False
 
     if not ok:
         sys.exit(1)
 
 
-def healthcheck_unit(unit, path):
+def healthcheck_unit(unit, path, header):
     addr = unit['Address']
     url = "%s://%s%s" % (addr['Scheme'], addr['Host'], path)
 
+    headers = {}
     try:
-        resp = urlopen(url, timeout=5)
+        headers = dict(h.split(':') for h in header.split(","))
+    except:
+        pass  # ignore headers
+
+    req = Request(url, None, headers)
+
+    try:
+        resp = urlopen(req, timeout=5)
     except HTTPError as err:
         logging.error('[%s] Failed to healthcheck unit: %s', url, err)
 
