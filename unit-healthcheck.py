@@ -22,14 +22,15 @@ def main():
         description='Get healthcheck for all units'
     )
     parser.add_argument('-a', metavar='app', type=str,
-                        help='Name of app')
+                        help='App name',
+                        required=True)
 
     parser.add_argument('-p', metavar='path', type=str,
                         default='/healthcheck',
-                        help='Path of healthcheck')
+                        help='Healthcheck pach')
 
     parser.add_argument('-H', metavar='header', type=str,
-                        help='Add headers to url call - "Header1:Value1, Header2:Value2"')
+                        help='Add headers to healthcheck call - "Header1:Value1, Header2:Value2"')
 
     args = parser.parse_args()
     get_units(args.a, args.p, args.H)
