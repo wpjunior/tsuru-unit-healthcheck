@@ -27,7 +27,7 @@ def main():
 
     parser.add_argument('-p', metavar='path', type=str,
                         default='/healthcheck',
-                        help='Healthcheck pach')
+                        help='Healthcheck path')
 
     parser.add_argument('-H', metavar='header', type=str,
                         help='Add headers to healthcheck call - "Header1:Value1, Header2:Value2"')
