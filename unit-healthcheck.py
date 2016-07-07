@@ -28,7 +28,7 @@ def main():
                         default='/healthcheck',
                         help='Path of healthcheck')
 
-    parser.add_argument('-h', metavar='header', type=str,
+    parser.add_argument('-H', metavar='header', type=str,
                         help='Add headers to url call - "Header1:Value1, Header2:Value2"')
 
     args = parser.parse_args()
