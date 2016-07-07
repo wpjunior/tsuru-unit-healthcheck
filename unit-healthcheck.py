@@ -28,6 +28,9 @@ def main():
                         default='/healthcheck',
                         help='Path of healthcheck')
 
+    parser.add_argument('-h', metavar='header', type=str,
+                        help='Add headers to url call - "Header1:Value1, Header2:Value2"')
+
     args = parser.parse_args()
     get_units(args.a, args.p)
 
@@ -65,12 +68,20 @@ def get_units(app, path):
         sys.exit(1)
 
 
-def healthcheck_unit(unit, path):
+def healthcheck_unit(unit, path, header):
     addr = unit['Address']
     url = "%s://%s%s" % (addr['Scheme'], addr['Host'], path)
 
+    headers = {}
     try:
-        resp = urlopen(url, timeout=5)
+        headers = dict(h.split(':') for h in header.split(","))
+    except:
+        pass  # ignore headers
+
+    req = Request(url, None, headers)
+
+    try:
+        resp = urlopen(req, timeout=5)
     except HTTPError as err:
         logging.error('[%s] Failed to healthcheck unit: %s', url, err)
 
