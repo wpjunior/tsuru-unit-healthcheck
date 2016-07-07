@@ -32,10 +32,10 @@ def main():
                         help='Add headers to url call - "Header1:Value1, Header2:Value2"')
 
     args = parser.parse_args()
-    get_units(args.a, args.p)
+    get_units(args.a, args.p, args.H)
 
 
-def get_units(app, path):
+def get_units(app, path, header):
     url = '%s/apps/%s' % (TSURU_TARGET, app)
     req = Request(url, None, {'Authorization': TSURU_TOKEN})
 
@@ -61,7 +61,7 @@ def get_units(app, path):
             logging.warn('[%s] skip status: %s', unit['Ip'], unit['Status'])
             continue
 
-        if not healthcheck_unit(unit, path):
+        if not healthcheck_unit(unit, path, header):
             ok = False
 
     if not ok:
