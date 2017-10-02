@@ -71,6 +71,7 @@ def get_units(app, path, header):
 
 def healthcheck_unit(unit, path, header):
     addr = unit['Address']
+    short_id = unit['ID'][:12]
     url = "%s://%s%s" % (addr['Scheme'], addr['Host'], path)
 
     headers = {}
@@ -94,15 +95,15 @@ def healthcheck_unit(unit, path, header):
         return False
 
     except Exception as err:
-        logging.error('[%s] Failed to healthcheck unit: %s', url, err)
+        logging.error('[%s][%s] Failed to healthcheck unit: %s, error: %s', short_id, url, err)
         return False
 
     if resp.code == 200:
-        logging.info('[%s] Healthcheck OK', url)
+        logging.info('[%s][%s] Healthcheck OK', short_id, url)
     else:
         logging.error(
-            '[%s] Failed to healthcheck unit, status code: %s, body: %s',
-            url, str(resp.code), resp.read())
+            '[%s][%s] Failed to healthcheck unit, status code: %s, body: %s',
+            short_id, url, str(resp.code), resp.read())
         return False
 
     return True
