@@ -95,7 +95,7 @@ def healthcheck_unit(unit, path, header):
         return False
 
     except Exception as err:
-        logging.error('[%s][%s] Failed to healthcheck unit: %s, error: %s', short_id, url, err)
+        logging.error('[%s][%s] Failed to healthcheck unit, error: %s', short_id, url, err)
         return False
 
     if resp.code == 200:
